@@ -61,6 +61,11 @@
 <body>
     <main id="all"></main>
     <section id="card">
+        <label for="">
+            <input type="checkbox" id="hide-selector">
+            <span>Toggle roumaji hidden</span>
+        </label>
+
         <div id="minicard">
             <div id="kana">あ</div>
             <div id="romaji" class="hide">a</div>
@@ -81,6 +86,7 @@
 
     const main = document.getElementById('all');
     const kana = document.getElementById('kana');
+    const hideSelector = document.getElementById('hide-selector');
     const romaji = document.getElementById('romaji');
     const randomizer = document.getElementsByClassName('randomizer');
     const gojuuon = document.querySelector('[data-type="gojuuon"]')
@@ -91,14 +97,16 @@
 
     window.addEventListener('keydown', function (event) {
         if (event.keyCode === 13) {
-            romaji.classList.toggle('hide')
+            const toggler = getHidden();
+            toggler.classList.toggle('hide')
         }
         if (event.keyCode === 32) {
+            event.preventDefault()
             gojuuon.click()
         }
     })
 
- 
+
     fetch('hiragana.json')
         .then(r => r.json())
         .then(r => chars = r)
@@ -111,9 +119,9 @@
     let charTypes = {};
 
     function randomChar(event) {
-
-        if(!romaji.classList.contains('hide')){
-            romaji.classList.add('hide')
+        const toggler = getHidden();
+        if (!toggler.classList.contains('hide')) {
+            toggler.classList.add('hide')
         }
 
         const type = this.getAttribute('data-type');
@@ -125,6 +133,17 @@
         const randomIndex = getRndInteger(0, charTypes[type].length)
         kana.innerHTML = charTypes[type][randomIndex].kana
         romaji.innerHTML = charTypes[type][randomIndex].roumaji
+    }
+
+    function getHidden() {
+        if (hideSelector.checked) {
+            romaji.classList.remove('hide');
+
+            return kana;
+        } else {
+            kana.classList.remove('hide');
+            return romaji;
+        }
     }
 
 </script>
