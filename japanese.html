@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Japanese Character Flash Card</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: lightgrey;
+        }
+
+        #kana,
+        #romaji {
+            font-size: 20rem;
+            width: 50%;
+            background-color: bisque;
+            border: 1px solid gray;
+            padding: 1rem;
+            text-align: center;
+        }
+
+        #card {
+            margin: 1rem;
+            background-color: white;
+            border-radius: 1rem;
+            border: 2px solid black;
+            padding: 1rem;
+        }
+
+        #minicard {
+            display: flex;
+        }
+
+        #button-group {
+            display: flex;
+            gap: 1rem;
+            justify-content: space-between;
+            margin-top: 1rem;
+        }
+
+        button {
+            background-color: cadetblue;
+            border: 2px solid black;
+            padding: 1rem;
+            font-size: larger;
+            color: black;
+            font-weight: bolder;
+            border-radius: 1rem;
+        }
+
+        .hide {
+            color: rgba(0, 0, 0, 0);
+        }
+    </style>
+</head>
+
+<body>
+    <main id="all"></main>
+    <section id="card">
+        <div id="minicard">
+            <div id="kana">あ</div>
+            <div id="romaji" class="hide">a</div>
+        </div>
+        <div id="button-group">
+            <button class="randomizer" data-type="gojuuon">Randomize gojuuon</button>
+            <button class="randomizer" data-type="dakuon">Randomize dakuon</button>
+            <button class="randomizer" data-type="handakuon">Randomize handakuon</button>
+            <button class="randomizer" data-type="youon">Randomize youon</button>
+        </div>
+    </section>
+</body>
+
+</html>
+<script>
+
+    let chars = [];
+
+    const main = document.getElementById('all');
+    const kana = document.getElementById('kana');
+    const romaji = document.getElementById('romaji');
+    const randomizer = document.getElementsByClassName('randomizer');
+    const gojuuon = document.querySelector('[data-type="gojuuon"]')
+
+    for (const iterator of randomizer) {
+        iterator.addEventListener('click', randomChar)
+    }
+
+    window.addEventListener('keydown', function (event) {
+        if (event.keyCode == 32) {
+            romaji.classList.toggle('hide')
+        }
+        if (event.key === 'Enter') {
+            gojuuon.click()
+        }
+    })
+
+ 
+    fetch('hiragana.json')
+        .then(r => r.json())
+        .then(r => chars = r)
+        .catch(e => console.log(e))
+
+    function getRndInteger(min, max) {
+        return Math.floor(Math.random() * (max - min)) + min;
+    }
+
+    let charTypes = {};
+
+    function randomChar(event) {
+
+        if(!romaji.classList.contains('hide')){
+            romaji.classList.add('hide')
+        }
+
+        const type = this.getAttribute('data-type');
+
+        if (charTypes[type] == undefined) {
+            charTypes[type] = chars.filter(r => r.type == type)
+        }
+
+        const randomIndex = getRndInteger(0, charTypes[type].length)
+        kana.innerHTML = charTypes[type][randomIndex].kana
+        romaji.innerHTML = charTypes[type][randomIndex].roumaji
+    }
+
+</script>
