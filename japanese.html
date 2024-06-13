@@ -90,10 +90,10 @@
     }
 
     window.addEventListener('keydown', function (event) {
-        if (event.keyCode == 32) {
+        if (event.keyCode === 13) {
             romaji.classList.toggle('hide')
         }
-        if (event.key === 'Enter') {
+        if (event.keyCode === 32) {
             gojuuon.click()
         }
     })
